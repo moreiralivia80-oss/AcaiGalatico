@@ -1,0 +1,56 @@
+@model acaigalatico.Application.DTOs.ProdutoDTO
+
+@{
+    ViewData["Title"] = "Novo Produto";
+}
+
+<div class="container p-4 border rounded bg-light">
+    <h3 class="text-primary">Cadastrar Novo Produto</h3>
+    <hr />
+    
+    <form asp-action="Create">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="row">
+            <div class="form-group col-md-6 mb-3">
+                <label asp-for="Nome" class="control-label fw-bold"></label>
+                <input asp-for="Nome" class="form-control" placeholder="Ex: Açaí 500ml" />
+                <span asp-validation-for="Nome" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-md-3 mb-3">
+                <label asp-for="PrecoVenda" class="control-label fw-bold"></label>
+                <input asp-for="PrecoVenda" class="form-control" placeholder="0,00" />
+                <span asp-validation-for="PrecoVenda" class="text-danger"></span>
+            </div>
+
+            <div class="form-group col-md-3 mb-3">
+                <label asp-for="CategoriaId" class="control-label fw-bold">Categoria</label>
+                <select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.CategoriaId">
+                    <option value="">-- Selecione --</option>
+                </select>
+                <span asp-validation-for="CategoriaId" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="form-group col-md-12 mb-3">
+                <label asp-for="Descricao" class="control-label fw-bold"></label>
+                <textarea asp-for="Descricao" class="form-control" rows="3"></textarea>
+                <span asp-validation-for="Descricao" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group col-md-12 mb-3">
+                <label asp-for="ImagemUrl" class="control-label fw-bold"></label>
+                <input asp-for="ImagemUrl" class="form-control" placeholder="Ex: /images/produtos/meu-produto.png" />
+                <small class="text-muted">Coloque a imagem na pasta wwwroot/images/produtos</small>
+                <span asp-validation-for="ImagemUrl" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-group pt-3">
+            <input type="submit" value="Salvar Produto" class="btn btn-success" />
+            <a asp-action="Index" class="btn btn-secondary ms-2">Voltar</a>
+        </div>
+    </form>
+</div>

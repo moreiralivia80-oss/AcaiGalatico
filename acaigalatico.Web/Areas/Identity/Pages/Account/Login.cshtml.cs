@@ -85,10 +85,18 @@ namespace acaigalatico.Web.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("Usuário logado.");
-                    if (Input.UserName == "Adminacai")
+                    
+                    // Busca o usuário para verificar as roles
+                    var user = await _userManager.FindByNameAsync(Input.UserName);
+                    if (user != null)
                     {
-                        return RedirectToAction("Index", "Admin");
+                        var roles = await _userManager.GetRolesAsync(user);
+                        if (roles.Contains("Admin") || Input.UserName.Equals("Adminacai", StringComparison.OrdinalIgnoreCase))
+                        {
+                            return RedirectToAction("Index", "Admin", new { area = "" });
+                        }
                     }
+                    
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)

@@ -3,11 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Açaí Galático</title>
+    <title>@ViewData["Title"] - Açaí Galáctico</title>
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/acaigalatico.Web.styles.css" asp-append-version="true" />
     <!-- FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
@@ -16,7 +15,7 @@
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark box-shadow mb-3">
             <div class="container">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/logo.png" alt="Açaí Galático" class="logo-img" />
+                    <img src="~/images/logo.png" alt="Açaí Galáctico" class="logo-img" />
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -44,11 +43,14 @@
                             <li class="nav-item">
                                 <a  class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Olá @User.Identity.Name!</a>
                             </li>
-                            <li class="nav-item nav-item-admin">
-                                <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">
-                                    <i class="fas fa-user-shield me-1"></i> Painel Admin
-                                </a>
-                            </li>
+                            @if (User.IsInRole("Admin"))
+                            {
+                                <li class="nav-item nav-item-admin">
+                                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">
+                                        <i class="fas fa-user-shield me-1"></i> Painel Admin
+                                    </a>
+                                </li>
+                            }
                             <li class="nav-item">
                                 <form class="form-inline m-0 p-0" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
                                     <button type="submit" class="nav-link text-white shadow-none w-100 text-start" style="cursor: pointer; border: 1px solid rgba(255, 255, 255, 0.2);">
@@ -92,7 +94,7 @@
 
     <footer class="footer text-center mt-auto" style="background-color: #2d5a27 !important; padding: 60px 0; z-index: 10;">
         <div class="container" style="color: white; font-size: 1.2rem;">
-            &copy; 2026 - Açaí Galático - O Melhor Açaí da Galáxia <br>
+            &copy; 2026 - Açaí Galáctico - O Melhor Açaí da Galáxia <br>
             <small>Desenvolvido com <i class="fas fa-heart text-danger"></i> e Energia Cósmica</small>
         </div>
     </footer>

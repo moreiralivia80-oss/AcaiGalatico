@@ -86,23 +86,31 @@
                 @if (TempData["SuccessMessage"] != null)
                 {
                     <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        @TempData["SuccessMessage"]
+                        <i class="fas fa-check-circle me-2"></i> @TempData["SuccessMessage"]
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                
+                @if (TempData["ErrorMessage"] != null)
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert" style="background-color: rgba(220, 53, 69, 0.2); color: #ff8787; border: 1px solid rgba(220, 53, 69, 0.5);">
+                        <i class="fas fa-exclamation-triangle me-2"></i> @TempData["ErrorMessage"]
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                 }
 
                 <form asp-action="SendMessage" asp-controller="Home" method="post">
                     <div class="mb-3">
                         <label for="nome" class="form-label">Nome</label>
-                        <input type="text" class="form-control form-control-glass" id="nome" name="nome" placeholder="Seu nome" required>
+                        <input type="text" class="form-control form-control-glass" id="nome" name="nome" placeholder="Seu nome" required maxlength="70">
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">E-mail</label>
-                        <input type="email" class="form-control form-control-glass" id="email" name="email" placeholder="seu@email.com" required>
+                        <input type="email" class="form-control form-control-glass" id="email" name="email" placeholder="seu@email.com" required maxlength="100">
                     </div>
                     <div class="mb-3">
                         <label for="telefone" class="form-label">Telefone</label>
-                        <input type="tel" class="form-control form-control-glass" id="telefone" name="telefone" placeholder="(11) 98259-9249">
+                        <input type="tel" class="form-control form-control-glass" id="telefone" name="telefone" placeholder="(11) 98259-9249" maxlength="20">
                     </div>
                     <div class="mb-3">
                         <label for="assunto" class="form-label">Assunto</label>
@@ -115,7 +123,8 @@
                     </div>
                     <div class="mb-3">
                         <label for="mensagem" class="form-label">Mensagem</label>
-                        <textarea class="form-control form-control-glass" id="mensagem" name="mensagem" rows="5" placeholder="Digite sua mensagem..." required></textarea>
+                        <textarea class="form-control form-control-glass" id="mensagem" name="mensagem" rows="5" placeholder="Digite sua mensagem..." required maxlength="1000"></textarea>
+                        <div class="form-text text-white-50 text-end" style="font-size: 0.75rem;">Máximo 1000 caracteres</div>
                     </div>
                     <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" style="background: linear-gradient(90deg, #9b59b6, #e056fd); border: none;">
                         Enviar Mensagem 🚀

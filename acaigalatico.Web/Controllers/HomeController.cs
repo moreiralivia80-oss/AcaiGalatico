@@ -34,54 +34,32 @@ public class HomeController : Controller
     [HttpPost]
     public IActionResult SendMessage(string nome, string email, string telefone, string assunto, string mensagem)
     {
-        string successMessage = "Mensagem enviada com sucesso!";
-
-        // 1. Tentar Envio via SMTP (se configurado)
-        try 
+        try
         {
-            var emailSettings = _configuration.GetSection("EmailSettings");
-            var senderEmail = emailSettings["SenderEmail"];
-            var senderPassword = emailSettings["SenderPassword"]; // PRECISA PREENCHER NO APPSETTINGS.JSON
-            var smtpServer = emailSettings["SmtpServer"];
-            var portStr = emailSettings["Port"];
-            var enableSslStr = emailSettings["EnableSsl"];
+            // Validação de segurança dos limites
+            if (string.IsNullOrEmpty(nome) || nome.Length > 70)
+                throw new Exception("O nome deve ter entre 1 e 70 caracteres.");
+            
+            if (string.IsNullOrEmpty(email) || email.Length > 100)
+                throw new Exception("O e-mail deve ter entre 1 e 100 caracteres.");
 
-            if (!string.IsNullOrEmpty(senderPassword) && !string.IsNullOrEmpty(smtpServer) && !string.IsNullOrEmpty(portStr) && !string.IsNullOrEmpty(enableSslStr) && !string.IsNullOrEmpty(senderEmail))
-            {
-                using (var client = new SmtpClient(smtpServer, int.Parse(portStr)))
-                {
-                    client.EnableSsl = bool.Parse(enableSslStr);
-                    client.Credentials = new NetworkCredential(senderEmail, senderPassword);
+            if (!string.IsNullOrEmpty(telefone) && telefone.Length > 20)
+                throw new Exception("O telefone deve ter no máximo 20 caracteres.");
 
-                    var mailMessage = new MailMessage
-                    {
-                        From = new MailAddress(senderEmail, "Açaí Galáctico Site"),
-                        Subject = $"[Site] {assunto} - {nome}",
-                        Body = $"Nome: {nome}\nEmail: {email}\nTelefone: {telefone}\n\nMensagem:\n{mensagem}",
-                        IsBodyHtml = false
-                    };
-                    mailMessage.To.Add("liuliuvks@gmail.com"); // Destinatário fixo
+            if (string.IsNullOrEmpty(mensagem) || mensagem.Length > 1000)
+                throw new Exception("A mensagem deve ter entre 1 e 1000 caracteres.");
 
-                    client.Send(mailMessage);
-                }
-            }
-            else
-            {
-                // Se não tiver senha, salva em arquivo para não perder a mensagem
-                SaveMessageToFile(nome, email, telefone, assunto, mensagem);
-                successMessage = "Mensagem salva no sistema! (Para envio real, configure a senha no appsettings.json)";
-            }
+            // Salva a mensagem localmente para o administrador ver depois
+            SaveMessageToFile(nome, email, telefone, assunto, mensagem);
+            
+            // Define a mensagem de sucesso solicitada pelo usuário
+            TempData["SuccessMessage"] = "Mensagem recebida, obrigada pelo feedback!";
         }
         catch (Exception ex)
         {
-            // Se der erro no envio, salva em arquivo também
-            SaveMessageToFile(nome, email, telefone, assunto, mensagem);
-            Console.WriteLine($"Erro ao enviar e-mail: {ex.Message}");
-            // Mostra o erro real para o usuário para ajudar no debug
-            successMessage = $"Erro SMTP: {ex.Message}. Mensagem salva em 'Emails_Enviados'.";
+            TempData["ErrorMessage"] = $"Erro ao processar mensagem: {ex.Message}";
         }
 
-        TempData["SuccessMessage"] = successMessage;
         return RedirectToAction("Contact");
     }
 
@@ -89,7 +67,8 @@ public class HomeController : Controller
     {
         try
         {
-            string folderPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), "AcaiGalatico 2", "Emails_Enviados");
+            // Salva na pasta do projeto para garantir permissão e fácil acesso
+            string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "Mensagens_Recebidas");
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -110,7 +89,7 @@ public class HomeController : Controller
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Erro ao salvar arquivo: {ex.Message}");
+            throw new Exception($"Erro ao salvar arquivo local: {ex.Message}");
         }
     }
 

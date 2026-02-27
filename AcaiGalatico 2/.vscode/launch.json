@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": ".NET Launch acaigalatico.Web",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "build acaigalatico.Web",
+      "program": "${workspaceFolder}/acaigalatico.Web/bin/Debug/net8.0/acaigalatico.Web.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/acaigalatico.Web",
+      "stopAtEntry": false,
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)",
+        "uriFormat": "%s"
+      }
+    }
+  ]
+}

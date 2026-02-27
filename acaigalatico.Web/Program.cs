@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages(); // Adiciona suporte a Razor Pages (necessário para Identity)
 
 // --- INICIO DA CONFIGURA��O DO BANCO ---
 
@@ -60,13 +61,36 @@ var localizationOptions = new RequestLocalizationOptions
 app.UseRequestLocalization(localizationOptions);
 // ---------------------------------------
 
+// --- APLICA MIGRAÇÕES AUTOMATICAMENTE ---
+try
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<acaigalatico.Infrastructure.Context.AppDbContext>();
+    db.Database.Migrate();
+}
+catch (Exception ex)
+{
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "Falha ao aplicar migrações do banco.");
+}
+// ----------------------------------------
+
 // --- BLOCO DE INICIALIZAÇÃO DE DADOS ---
 if (app.Environment.IsDevelopment())
 {
     using (var scope = app.Services.CreateScope())
     {
-        var seedingService = scope.ServiceProvider.GetRequiredService<acaigalatico.Infrastructure.SeedingService>();
-        await seedingService.SeedAsync(); // Roda o código de povoar o banco
+        try 
+        {
+            var seedingService = scope.ServiceProvider.GetRequiredService<acaigalatico.Infrastructure.SeedingService>();
+            await seedingService.SeedAsync(); // Roda o código de povoar o banco
+        }
+        catch (Exception ex)
+        {
+            // Log do erro mas deixa a aplicação subir
+            var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+            logger.LogError(ex, "Erro ao popular o banco de dados na inicialização.");
+        }
     }
 }
 // ---------------------------------------

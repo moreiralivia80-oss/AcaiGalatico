@@ -25,9 +25,9 @@ export function Navigation({ currentPage, onNavigate, isAdminAuthenticated }: Na
           >
             <img 
               src={logo} 
-              alt="Açaí Galático" 
-              className="h-20 sm:h-24 object-contain drop-shadow-lg group-hover:scale-105 transition-all" 
-            />
+              alt="Açaí Galáctico" 
+               className="h-20 sm:h-24 object-contain drop-shadow-lg group-hover:scale-105 transition-all" 
+             />
           </button>
           
           <div className="flex gap-1">

@@ -12,15 +12,15 @@ using acaigalatico.Infrastructure.Context;
 namespace acaigalatico.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260113230300_AdicionandoIdentity")]
-    partial class AdicionandoIdentity
+    [Migration("20260313003759_InicialFinal")]
+    partial class InicialFinal
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.11")
+                .HasAnnotation("ProductVersion", "10.0.1")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -300,6 +300,35 @@ namespace acaigalatico.Infrastructure.Migrations
                     b.ToTable("ItensVenda");
                 });
 
+            modelBuilder.Entity("acaigalatico.Domain.Entities.ItemVendaAdicional", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ItemVendaId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("PrecoUnitario")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("ProdutoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantidade")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ItemVendaId");
+
+                    b.HasIndex("ProdutoId");
+
+                    b.ToTable("ItensVendaAdicionais");
+                });
+
             modelBuilder.Entity("acaigalatico.Domain.Entities.Produto", b =>
                 {
                     b.Property<int>("Id")
@@ -322,11 +351,19 @@ namespace acaigalatico.Infrastructure.Migrations
                     b.Property<bool>("EhParaVenda")
                         .HasColumnType("bit");
 
+                    b.Property<bool>("EmDestaque")
+                        .HasColumnType("bit");
+
                     b.Property<int>("EstoqueAtual")
                         .HasColumnType("int");
 
                     b.Property<int>("EstoqueMinimo")
                         .HasColumnType("int");
+
+                    b.Property<string>("ImagemUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -346,6 +383,42 @@ namespace acaigalatico.Infrastructure.Migrations
                     b.ToTable("Produtos");
                 });
 
+            modelBuilder.Entity("acaigalatico.Domain.Entities.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("FotoPerfil")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("SenhaHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Usuarios");
+                });
+
             modelBuilder.Entity("acaigalatico.Domain.Entities.Venda", b =>
                 {
                     b.Property<int>("Id")
@@ -354,13 +427,31 @@ namespace acaigalatico.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("BairroEntrega")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
                     b.Property<int?>("ClienteId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("DataVenda")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("EnderecoEntrega")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
                     b.Property<int>("FormaPagamento")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Observacao")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<decimal>("ValorTotal")
@@ -429,7 +520,7 @@ namespace acaigalatico.Infrastructure.Migrations
                     b.HasOne("acaigalatico.Domain.Entities.Produto", "Produto")
                         .WithMany()
                         .HasForeignKey("ProdutoId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("acaigalatico.Domain.Entities.Venda", "Venda")
@@ -441,6 +532,25 @@ namespace acaigalatico.Infrastructure.Migrations
                     b.Navigation("Produto");
 
                     b.Navigation("Venda");
+                });
+
+            modelBuilder.Entity("acaigalatico.Domain.Entities.ItemVendaAdicional", b =>
+                {
+                    b.HasOne("acaigalatico.Domain.Entities.ItemVenda", "ItemVenda")
+                        .WithMany("Adicionais")
+                        .HasForeignKey("ItemVendaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("acaigalatico.Domain.Entities.Produto", "Produto")
+                        .WithMany()
+                        .HasForeignKey("ProdutoId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ItemVenda");
+
+                    b.Navigation("Produto");
                 });
 
             modelBuilder.Entity("acaigalatico.Domain.Entities.Produto", b =>
@@ -471,6 +581,11 @@ namespace acaigalatico.Infrastructure.Migrations
             modelBuilder.Entity("acaigalatico.Domain.Entities.Cliente", b =>
                 {
                     b.Navigation("Compras");
+                });
+
+            modelBuilder.Entity("acaigalatico.Domain.Entities.ItemVenda", b =>
+                {
+                    b.Navigation("Adicionais");
                 });
 
             modelBuilder.Entity("acaigalatico.Domain.Entities.Venda", b =>

@@ -4,11 +4,14 @@ using System.Text;
 
 using acaigalatico.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+
+using Microsoft.EntityFrameworkCore.Diagnostics;
 
 namespace acaigalatico.Infrastructure.Context
 {
-    public class AppDbContext : IdentityDbContext
+    public class AppDbContext : IdentityDbContext<IdentityUser>
     {
         // Construtor: Passa as opções (como a string de conexão) para a classe base
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
@@ -21,8 +24,14 @@ namespace acaigalatico.Infrastructure.Context
         public DbSet<Venda> Vendas { get; set; }
         public DbSet<ItemVenda> ItensVenda { get; set; }
         public DbSet<ItemVendaAdicional> ItensVendaAdicionais { get; set; }
+        public DbSet<Usuario> Usuarios { get; set; }
 
         // Configurações adicionais (Opcional, mas recomendado para Clean Architecture)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.ConfigureWarnings(w => w.Ignore(RelationalEventId.PendingModelChangesWarning));
+        }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -51,6 +60,16 @@ namespace acaigalatico.Infrastructure.Context
                 .WithMany()
                 .HasForeignKey(i => i.ProdutoId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // Configuração para Usuario
+            modelBuilder.Entity<Usuario>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Nome).IsRequired().HasMaxLength(100);
+                entity.Property(e => e.Email).IsRequired().HasMaxLength(150);
+                entity.HasIndex(e => e.Email).IsUnique(); // Email deve ser único
+                entity.Property(e => e.SenhaHash).IsRequired();
+            });
         }
     }
 }

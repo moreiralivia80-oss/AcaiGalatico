@@ -24,6 +24,12 @@
                         <div asp-validation-summary="All" class="text-danger mb-3" role="alert"></div>
                         
                         <div class="form-floating mb-3">
+                            <input asp-for="Input.Nome" class="form-control text-white" placeholder="Seu nome" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;" />
+                            <label asp-for="Input.Nome" class="text-white-50">Nome Completo</label>
+                            <span asp-validation-for="Input.Nome" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
                             <input asp-for="Input.Email" class="form-control text-white" placeholder="name@example.com" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: white;" />
                             <label asp-for="Input.Email" class="text-white-50">Email</label>
                             <span asp-validation-for="Input.Email" class="text-danger"></span>

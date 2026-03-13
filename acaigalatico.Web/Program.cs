@@ -24,13 +24,16 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(connectionString, b => b.MigrationsAssembly("acaigalatico.Infrastructure")));
 
 // 3. Configura o Identity (Login)
+// 3. Configura o Identity (Login)
 builder.Services.AddDefaultIdentity<IdentityUser>(options => {
     options.SignIn.RequireConfirmedAccount = false;
     options.Password.RequireDigit = true;
     options.Password.RequireLowercase = false;
-    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireNonAlphanumeric = false; // Aceita o '*' mesmo como false
     options.Password.RequireUppercase = false;
-    options.Password.RequiredLength = 4;
+
+    // Altere para 8 para refletir sua nova senha padrão
+    options.Password.RequiredLength = 8;
 })
 .AddRoles<IdentityRole>()
 .AddEntityFrameworkStores<AppDbContext>();
